@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from .models import (
-    Category, SubCategory, Product, ProductPrice,
-    OrganizationProduct, ProductInventory, ProductIdentifier,
-    ProductOptionVariant, ProductVariant, UnitMensuare
+    Category, SubCategory, Product, UnitMensuare, ProductVariant, ProductOptionVariant, ProductCombination, ProductOptionCombination, ProductPrice, Collection, IntelligentCombination
 )
 from rest_framework.exceptions import ValidationError
 
@@ -34,173 +32,155 @@ class UnitMensuareSerializer(serializers.ModelSerializer):
         model = UnitMensuare
         fields = '__all__'
 
-class ProductPriceSerializer(serializers.ModelSerializer):
+class ProductSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ProductPrice
-        fields = [
-            'productPriceId', 'price', 'comparePrice', 'cost',
-            'revenue', 'margin', 'isTax'
-        ]
+        model = Product
+        fields = ['productId', 'name', 'description', 'subCategoryId']
         extra_kwargs = {
-            'productPriceId': {'read_only': True}, 
-            'productId': {'read_only': True}
+            'productId': {'required': True}  # productId ahora es requerido
         }
 
-class ProductInventorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductInventory
-        fields = [
-            'productInventoryId', 'productId', 'unitMeansureId',
-            'weight', 'minStock', 'sellOutStock'
-        ]
-        extra_kwargs = {
-            'productInventoryId': {'read_only': True},
-            'productId': {'read_only': True}
-        }
+    def create(self, validated_data):
+        return Product.objects.create(**validated_data)
 
-class OrganizationProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OrganizationProduct
-        fields = [
-            'organizationProductId', 'productId', 'productType',
-            'productVendor', 'productCollection', 'productTag',
-            'productOrigin'
-        ]
-        extra_kwargs = {
-            'organizationProductId': {'read_only': True},
-            'productId': {'read_only': True},
-        }
-
-class ProductIdentifierSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductIdentifier
-        fields = [
-            'productIdentifierId', 'productId', 'sku',
-            'barCode'
-        ]
-        extra_kwargs = {
-            'productIdentifierId': {'read_only': True},
-            'productId': {'read_only': True}
-        }
 class ProductOptionVariantSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductOptionVariant
-        fields = ['name', 'state']
-
+        fields = ['productOptionVariantId', 'name', 'state']
         extra_kwargs = {
-            'productOptionVariantId': {'read_only': True},
-            'productVariantId': {'read_only': True}
+            'productOptionVariantId': {'required': False},  # Opcional para permitir la creación automática del UUID
         }
 
 class ProductVariantSerializer(serializers.ModelSerializer):
-    product_option_variants = ProductOptionVariantSerializer(many=True)
+    options = serializers.ListField(
+        child=serializers.CharField(max_length=100),
+        write_only=True
+    )
 
     class Meta:
         model = ProductVariant
-        fields = ['name', 'state', 'product_option_variants']
-
-        extra_kwargs = {
-            'productVariantId': {'read_only': True},
-            'productId': {'read_only': True}
-        }
+        fields = ['productId', 'name', 'options']
 
     def create(self, validated_data):
-        options_data = validated_data.pop('product_option_variants')
-        variant = ProductVariant.objects.create(**validated_data)
-        for option_data in options_data:
-            ProductOptionVariant.objects.create(productVariantId=variant, **option_data)
-        return variant
+        options_data = validated_data.pop('options')
+        product_variant = ProductVariant.objects.create(**validated_data)
 
-class ProductSerializer(serializers.ModelSerializer):
-    product_price = ProductPriceSerializer(required=False)
-    organization_product = OrganizationProductSerializer(required=False)
-    product_inventory = ProductInventorySerializer(required=False)
-    product_identifier = ProductIdentifierSerializer(required=False)
-    product_variants = ProductVariantSerializer(many=True, required=False)
-    subCategoryName = serializers.CharField(source='subCategoryId.name')
+        for option_name in options_data:
+            ProductOptionVariant.objects.create(
+                productVariantId=product_variant,
+                name=option_name,
+                state=True
+            )
+
+        return product_variant
+
+# Código corregido en el serializer
+class ProductCombinationSerializer(serializers.ModelSerializer):
+    options = serializers.ListField(
+        child=serializers.DictField(
+            child=serializers.CharField()  # Valida cada campo dentro del objeto
+        ),
+        write_only=True
+    )
 
     class Meta:
-        model = Product
-        fields = [
-            'productId', 'subCategoryId', 'subCategoryName', 'name', 'description',
-            'state', 'dateCreated', 'product_price',
-            'organization_product', 'product_inventory',
-            'product_identifier', 'product_variants'
-        ]
+        model = ProductCombination
+        fields = ['productCombinationId', 'productId', 'name', 'options']
+
         extra_kwargs = {
-            'productId': {'read_only': True},
-            'dateCreated': {'read_only': True},
+            'productCombinationId': {'required': False, 'read_only': True},
         }
 
     def create(self, validated_data):
-        price_data = validated_data.pop('product_price', None)
-        organization_data = validated_data.pop('organization_product', None)
-        inventory_data = validated_data.pop('product_inventory', None)
-        identifier_data = validated_data.pop('product_identifier', None)
-        variants_data = validated_data.pop('product_variants', [])
+        options_data = validated_data.pop('options', [])
 
-        product = Product.objects.create(**validated_data)
+        # Crear ProductCombination
+        product_combination = ProductCombination.objects.create(**validated_data)
 
-        if price_data:
-            ProductPrice.objects.create(productId=product, **price_data)
+        for option_data in options_data:
+            option_name = option_data.get('name')
+            price = option_data.get('price')
+
+            if not option_name or price is None:
+                raise serializers.ValidationError("Each option must include 'name' and 'price'.")
+
+            # Crear ProductOptionCombination con el nombre correcto del campo
+            option_combination = ProductOptionCombination.objects.create(
+                productCombinationId=product_combination,  # Usa el nombre correcto
+                name=option_name
+            )
+            
+            # Crear registro en ProductPrice
+            ProductPrice.objects.create(
+                productCombination=product_combination,
+                productOptionCombination=option_combination,
+                price=price
+            )
+
+        return product_combination
+
+
+class ProductPriceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductPrice
+        fields = ['productPriceId', 'product', 'productCombination', 'productOptionCombination', 
+                  'price', 'comparePrice', 'cost', 'isTax']
+
+        extra_kwargs = {
+            'productPriceId': {'read_only': True},
+            'product': {'required': False}, 
+            'productCombination': {'required': False},
+            'productOptionCombination': {'required': False},
+        }
+
+class CollectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Collection
+        fields = ['combinationId', 'name', 'description', 'typeCollection', 'createdAt']
+
+# Serializer para el modelo IntelligentCombination
+class IntelligentCombinationSerializer(serializers.ModelSerializer):
+    combinationId = serializers.PrimaryKeyRelatedField(queryset=Collection.objects.all())
+
+    class Meta:
+        model = IntelligentCombination
+        fields = ['intelligentCombinationId', 'combinationId', 'conditionName', 'conditionValue']
+
+# Serializer compuesto para manejar ambos modelos a la vez
+class CombinedSerializer(serializers.Serializer):
+    collection = CollectionSerializer()
+    intelligent_combination = IntelligentCombinationSerializer()
+
+    def create(self, validated_data):
+        # Crear una colección primero
+        collection_data = validated_data.pop('collection')
+        collection = Collection.objects.create(**collection_data)
         
-        if organization_data:
-            OrganizationProduct.objects.create(productId=product, **organization_data)
+        # Crear la combinación inteligente vinculada a la colección recién creada
+        intelligent_combination_data = validated_data.pop('intelligent_combination')
+        intelligent_combination = IntelligentCombination.objects.create(
+            combinationId=collection,
+            **intelligent_combination_data
+        )
         
-        if inventory_data:
-            ProductInventory.objects.create(productId=product, **inventory_data)
-        
-        if identifier_data:
-            ProductIdentifier.objects.create(productId=product, **identifier_data)
-
-        for variant_data in variants_data:
-            options_data = variant_data.pop('product_option_variants', [])
-            variant = ProductVariant.objects.create(productId=product, **variant_data)
-            for option_data in options_data:
-                ProductOptionVariant.objects.create(productVariantId=variant, **option_data)
-
-        return product
+        return {
+            'collection': collection,
+            'intelligent_combination': intelligent_combination
+        }
 
     def update(self, instance, validated_data):
-        price_data = validated_data.pop('product_price', None)
-        organization_data = validated_data.pop('organization_product', None)
-        inventory_data = validated_data.pop('product_inventory', None)
-        identifier_data = validated_data.pop('product_identifier', None)
-        variants_data = validated_data.pop('product_variants', [])
-
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
+        # Actualizar Collection
+        collection_data = validated_data.pop('collection')
+        instance.name = collection_data.get('name', instance.name)
+        instance.description = collection_data.get('description', instance.description)
+        instance.typeCollection = collection_data.get('typeCollection', instance.typeCollection)
         instance.save()
 
-        # Actualizar datos relacionados si están presentes
-        if price_data:
-            product_price, _ = ProductPrice.objects.update_or_create(
-                productId=instance, defaults=price_data
-            )
-
-        if organization_data:
-            organization_product, _ = OrganizationProduct.objects.update_or_create(
-                productId=instance, defaults=organization_data
-            )
-
-        if inventory_data:
-            product_inventory, _ = ProductInventory.objects.update_or_create(
-                productId=instance, defaults=inventory_data
-            )
-
-        if identifier_data:
-            product_identifier, _ = ProductIdentifier.objects.update_or_create(
-                productId=instance, defaults=identifier_data
-            )
-
-        for variant_data in variants_data:
-            options_data = variant_data.pop('product_option_variants', [])
-            variant, _ = ProductVariant.objects.update_or_create(
-                productId=instance, name=variant_data['name'], defaults=variant_data
-            )
-            for option_data in options_data:
-                ProductOptionVariant.objects.update_or_create(
-                    productVariantId=variant, name=option_data['name'], defaults=option_data
-                )
+        # Actualizar IntelligentCombination
+        intelligent_combination_data = validated_data.pop('intelligent_combination')
+        instance.intelligent_combinations.conditionName = intelligent_combination_data.get('conditionName', instance.intelligent_combinations.conditionName)
+        instance.intelligent_combinations.conditionValue = intelligent_combination_data.get('conditionValue', instance.intelligent_combinations.conditionValue)
+        instance.intelligent_combinations.save()
 
         return instance
+
