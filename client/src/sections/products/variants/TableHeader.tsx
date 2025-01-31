@@ -13,6 +13,7 @@ interface Props {
   expandedAll: boolean;
   isShowDropDown: boolean;
   setIsShowDropDown: Dispatch<SetStateAction<boolean>>;
+  allCombinationsAndOptionsInvisible: boolean;
 }
 
 export default function TableHeader({ setCombinations, isShowDropDown, setIsShowDropDown, combinations, expandedAll, setExpandedAll, getCheckedCount, variants }: Props) {
@@ -37,7 +38,7 @@ export default function TableHeader({ setCombinations, isShowDropDown, setIsShow
             <CheckBox onChange={handleAllCheckboxChange} initialValue={combinations.every(combination => combination.isChecked)} />
           </div>
         </th>
-        <th scope="col" onClick={() => console.log(combinations)} className="px-4 py-2 w-[40%]">
+        <th scope="col" className="px-4 py-2 w-[40%]">
           {getCheckedCount() > 0 ? (
             <>
               <span className='text-primary font-semibold'>Seleccionados: {getCheckedCount()}</span>

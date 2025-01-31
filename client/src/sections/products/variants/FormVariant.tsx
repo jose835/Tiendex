@@ -1,10 +1,13 @@
-import { Dispatch, SetStateAction } from 'react'
-import { Delete, GridDots } from '../../../icons/icons';
+import { Dispatch, SetStateAction } from 'react';
+import { GridDots } from '../../../icons/icons';
 import FieldInput from '../../../components/forms/FieldInput';
 import { Variant } from '../../../types/types';
-import FieldInputWithElement from '../../../components/forms/FieldInputWithElement';
 import Button from '../../../components/forms/Button';
 import { showToast } from '../../../components/Toast';
+import { SortableContext } from '@dnd-kit/sortable';
+import { DndContext, closestCenter } from '@dnd-kit/core';
+import { verticalListSortingStrategy } from '@dnd-kit/sortable';
+import FormOptionVariant from './FormOptionVariant';
 
 interface Props {
   variants: Variant[];
@@ -15,33 +18,6 @@ interface Props {
 }
 
 export default function FormVariant({ variants, setVariants, handleCheckboxChange, variant, variantIndex }: Props) {
-  const handleRemoveOption = (variantIndex: number, optionIndex: number) => {
-    const newVariants = [...variants];
-    newVariants[variantIndex].options = newVariants[variantIndex].options.filter((_, i) => i !== optionIndex);
-    setVariants(newVariants);
-  };
-
-  const handleOptionChange = (variantIndex: number, optionIndex: number, name: string) => {
-    const newVariants = [...variants];
-
-    const isDuplicate = newVariants[variantIndex].options
-      .filter((_, index) => index !== optionIndex)
-      .some(option => option.name.trim().toLowerCase() === name.trim().toLowerCase() && name.trim() !== '');
-
-    if (isDuplicate) {
-      showToast('El nombre de la opción ya existe', false);
-      return;
-    }
-
-    newVariants[variantIndex].options[optionIndex].name = name;
-
-    if (optionIndex === newVariants[variantIndex].options.length - 1 && name.trim() !== '') {
-      newVariants[variantIndex].options.push({ isChecked: false, name: '', price: 0, quantity: 0, visible: true, barCode: '', sku: '', weight: '', country: '', sellingOutStock: false });
-    }
-
-    setVariants(newVariants);
-  };
-
   const handleRemoveVariant = (index: number) => {
     const newVariants = variants.filter((_, i) => i !== index);
     setVariants(newVariants);
@@ -63,10 +39,9 @@ export default function FormVariant({ variants, setVariants, handleCheckboxChang
 
   const handleVariantNameChange = (index: number, value: string) => {
     const newVariants = [...variants];
-
     const isDuplicate = newVariants
       .filter((_, i) => i !== index)
-      .some(variant => variant.name.trim().toLowerCase() === value.trim().toLowerCase());
+      .some(v => v.name.trim().toLowerCase() === value.trim().toLowerCase());
 
     if (isDuplicate) {
       showToast(`Ya has utilizado el nombre de variante "${value}".`, false);
@@ -74,6 +49,25 @@ export default function FormVariant({ variants, setVariants, handleCheckboxChang
 
     newVariants[index].name = value;
     setVariants(newVariants);
+  };
+
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      const oldIndex = variant.options.findIndex(option => option.id === active.id);
+      const newIndex = variant.options.findIndex(option => option.id === over?.id);
+
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const updatedOptions = [...variant.options];
+        const [movedOption] = updatedOptions.splice(oldIndex, 1);
+        updatedOptions.splice(newIndex, 0, movedOption);
+
+        const updatedVariants = [...variants];
+        updatedVariants[variantIndex].options = updatedOptions;
+        setVariants(updatedVariants);
+      }
+    }
   };
 
   return (
@@ -88,28 +82,35 @@ export default function FormVariant({ variants, setVariants, handleCheckboxChang
         />
       </div>
 
-      {variant.options.map((option, optionIndex) => (
-        <div key={optionIndex} className="flex items-center mt-2 ml-5">
-          <GridDots />
-          <FieldInputWithElement
-            prependChild={
-              variant.options.length > 1 && optionIndex !== variant.options.length - 1 ? (
-                <button type="button" onClick={() => handleRemoveOption(variantIndex, optionIndex)}>
-                  <Delete className="text-graying size-5 hover:text-secondary/80 cursor-pointer" />
-                </button>
-              ) : <></>
-            }
-
-            name={optionIndex === 0 ? 'Nombre de opción' : ''}
-            className="ml-5 w-full"
-            value={option.name}
-            onChange={(e) => handleOptionChange(variantIndex, optionIndex, e.target.value)}
-          />
-        </div>
-      ))}
+      <DndContext
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={variant.options.map(option => option.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          {variant.options.map((option, optionIndex) => (
+            <FormOptionVariant
+              key={option.id}
+              setVariants={setVariants}
+              variants={variants}
+              option={option}
+              optionIndex={optionIndex}
+              variant={variant}
+              variantIndex={variantIndex}
+            />
+          ))}
+        </SortableContext>
+      </DndContext>
 
       <div className="flex justify-between items-center mt-4 ml-14">
-        <Button onClick={() => handleRemoveVariant(variantIndex)} name="Eliminar" className="text-red-800 hover:text-red-900 bg-white/60 border border-gray-300" />
+        <Button
+          onClick={() => handleRemoveVariant(variantIndex)}
+          name="Eliminar"
+          style='primary'
+          className="text-red-800 hover:text-red-900 bg-white/60"
+        />
         <Button
           onClick={() => !isDoneButtonDisabled(variant) && setVariants(prev => {
             const updated = [...prev];
@@ -117,10 +118,11 @@ export default function FormVariant({ variants, setVariants, handleCheckboxChang
             return updated;
           })}
           name="Hecho"
-          className="bg-primary text-white"
+          style='secondary'
+          className=""
           disabled={isDoneButtonDisabled(variant)}
         />
       </div>
     </div>
-  )
+  );
 }

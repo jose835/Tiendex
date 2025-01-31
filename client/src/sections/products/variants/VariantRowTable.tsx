@@ -72,12 +72,20 @@ export default function VariantRowTable({
     });
   }
 
+  function handleChangeEliminated(value: boolean) {
+    setCombinations(prevCombinations => {
+      const updatedCombinations = [...prevCombinations];
+      updatedCombinations[variantIndex].variantIsEliminated = value;
+      return updatedCombinations;
+    });
+  }
+
   return (
     <>
-      <tr role='button' onClick={() => toggleRow(variantIndex)} className={`bg-white ${!combination.visible && 'hidden'} [&>th]:font-medium [&>th]:text-primary border-b cursor-pointer hover:bg-whiting2 hover:border-gray-300`}>
+      <tr role='button' onClick={() => toggleRow(variantIndex)} className={`${combination.variantIsEliminated ? 'bg-whiting2' : 'bg-white'} ${!combination.visible && 'hidden'} [&>th]:font-medium [&>th]:text-primary border-b cursor-pointer hover:bg-whiting2 hover:border-gray-300`}>
         <td className="pl-4 w-2">
           <div role='button' onClick={(e) => e.stopPropagation()} className="flex items-center">
-            <CheckBox onChange={handleAllCheckboxChange} initialValue={combination.options.length > 0 ? combination.options.every(option => option.isChecked) : combination.isChecked} />
+            <CheckBox disabled={combination.variantIsEliminated} onChange={handleAllCheckboxChange} initialValue={combination.options.length > 0 ? combination.options.every(option => option.isChecked) : combination.isChecked} />
           </div>
         </td>
         <td className="px-4 w-[40%] py-2">
@@ -89,52 +97,61 @@ export default function VariantRowTable({
               <span className='text-secondary/90 text-sm font-semibold'>{combination.optionName}</span>
               {combination.options.length > 0 ? (
                 <div className='flex items-center space-x-1'>
-                  <span className='text-secondary/80 font-medium'>{combination.options.filter(option => option.visible).length} variante{combination.options.length > 1 ? 's' : ''}</span>
+                  <span className='text-secondary/80 font-medium'>{combination.options.filter(option => option.visible && !option.isEliminated).length} variante{combination.options.length > 1 ? 's' : ''}</span>
                   <Down className='text-secondary/80 size-4' />
                 </div>
               ) : (
                 <span className='text-secondary/80 text-xs font-medium'>{combination.variantSku}</span>
-              )
-              }
+              )}
             </div>
           </div>
         </td>
         <td className="py-2">
-          <div data-tooltip-id={`price - ${variantIndex}`} onClick={(e) => e.stopPropagation()}>
-            <FieldInputWithElement
-              isNumber
-              onFocus={() => setFocused(variantIndex)}
-              onBlur={() => setFocused(null)}
-              onChange={(e) => handleOptionValueVariantChange('price', variantIndex, e.target.value)}
-              appendChild={<span className='text-secondary/80 font-medium'>C$</span>}
-              placeholder='0.00'
-              value={
-                focused === variantIndex
-                  ? getMinMaxPrice(combination.options) !== '0'
-                    ? getMinMaxPrice(combination.options).includes('-')
-                      ? ''
+          {!combination.variantIsEliminated &&
+            <div data-tooltip-id={`price - ${variantIndex}`} onClick={(e) => e.stopPropagation()}>
+              <FieldInputWithElement
+                isNumber
+                onFocus={() => setFocused(variantIndex)}
+                onBlur={() => setFocused(null)}
+                onChange={(e) => handleOptionValueVariantChange('price', variantIndex, e.target.value)}
+                appendChild={<span className='text-secondary/80 font-medium'>C$</span>}
+                placeholder='0.00'
+                value={
+                  focused === variantIndex
+                    ? getMinMaxPrice(combination.options) !== '0'
+                      ? getMinMaxPrice(combination.options).includes('-')
+                        ? ''
+                        : Number(combination.variantPrice).toString()
                       : Number(combination.variantPrice).toString()
-                    : Number(combination.variantPrice).toString()
-                  : combination.options.length > 0 ? getMinMaxPrice(combination.options) : Number(combination.variantPrice).toString()
-              }
-              className='h-full'
-            />
-            {combination.options.length > 0 && <ToolTip id={`price - ${variantIndex}`} title={`Se aplica a las ${combination.options.length} ${combination.options.length > 1 ? 'variantes' : 'variante'}`} />}
-          </div>
+                    : combination.options.length > 0 ? getMinMaxPrice(combination.options) : Number(combination.variantPrice).toString()
+                }
+                className='h-full'
+              />
+              {combination.options.length > 0 && <ToolTip id={`price - ${variantIndex}`} title={`Se aplica a las ${combination.options.length} ${combination.options.length > 1 ? 'variantes' : 'variante'}`} />}
+            </div>
+          }
         </td>
-        <td className="p-2 w-32">
-          <div data-tooltip-id={`quantity - ${variantIndex}`} onClick={(e) => e.stopPropagation()}>
-            <FieldInputWithElement
-              value={combination.options.length > 0 ? calculateTotalQuantity(combination.options).toString() : Number(combination.variantQuantity).toString()}
-              placeholder='0'
-              onChange={(e) => handleOptionValueVariantChange('quantity', variantIndex, e.target.value)}
-              className='h-full'
-              disabled={combination.options.length > 0}
-            />
-            {combination.options.length > 0 && <ToolTip id={`quantity - ${variantIndex}`} title='Actualización solo para variantes individuales' />}
-          </div>
+        <td className="p-2 w-32 relative">
+          {!combination.variantIsEliminated ? (
+            <div data-tooltip-id={`quantity - ${variantIndex}`} onClick={(e) => e.stopPropagation()}>
+              <FieldInputWithElement
+                value={combination.options.length > 0 ? calculateTotalQuantity(combination.options).toString() : Number(combination.variantQuantity).toString()}
+                placeholder='0'
+                onChange={(e) => handleOptionValueVariantChange('quantity', variantIndex, e.target.value)}
+                className='h-full'
+                disabled={combination.options.length > 0}
+              />
+              {combination.options.length > 0 && <ToolTip id={`quantity - ${variantIndex}`} title='Actualización solo para variantes individuales' />}
+            </div>
+          ) : (
+            <div className="absolute left-auto space-x-3 right-3 w-96 h-full top-1/3 text-right">
+              <span className='font-medium text-[13px] text-secondary'>Esta variante no se creará</span>
+              <span onClick={() => handleChangeEliminated(false)} className="text-blueprimary hover:underline hover:to-bluesecondary font-medium ml-2">Deshacer</span>
+            </div>
+
+          )}
         </td>
-      </tr>
+      </tr >
       {
         expandedRows.includes(variantIndex) && combination.options.map((option, optionIndex) => (
           <OptionRowTable

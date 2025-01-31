@@ -1,12 +1,10 @@
-interface Options {
-  name: string;
-  value: string | number;
-}
+import { SelectOptions } from "../../types/types";
+
 
 interface Props {
   name?: string;
   id?: string;
-  options: Options[];
+  options: SelectOptions[];
   value?: string | number;
   className?: string;
   disabled?: boolean;
@@ -45,10 +43,11 @@ export default function FieldSelect({
           {name}
         </label>
       }
+
       <select
         id={id}
         value={value}
-        className="bg-gray-50 border h-9 outline-none border-gray-400 text-primary text-sm font-medium rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
+        className="bg-gray-50 text-[13px] px-2 border h-9 outline-none border-gray-400 text-primary  font-medium rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full"
         onChange={handleChange}
         disabled={disabled}
       >

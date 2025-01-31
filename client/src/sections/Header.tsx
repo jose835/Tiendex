@@ -41,10 +41,12 @@ export default function Header({ onClick, onClickSecondary, text, save }: Header
                 type="button"
                 onClick={onClickSecondary}
                 name="Descartar"
+                style="none"
                 className="bg-[#404040] w-full text-white border-0"
               />
               <Button
                 type="button"
+                style="none"
                 name="Guardar"
                 className="bg-white text-primary w-full ml-2"
                 onClick={onClick}

@@ -21,7 +21,7 @@ export default function Container({
       <Header text={text} save={save} onClickSecondary={onClickSecondary} onClick={onSaveClick} />
       <Aside />
       <main className='bg-[#f1f1f1] overflow-auto'>
-        <div className='pb-10'>
+        <div className='pb-10 px-5 pt-5'>
           {children}
         </div>
       </main>

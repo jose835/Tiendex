@@ -1,3 +1,4 @@
+
 import { useState, useEffect, ChangeEvent } from 'react';
 import { allowNumber } from '../../utils/function';
 
@@ -25,7 +26,7 @@ export default function FieldInput({
   isNumber = false,
   autofocus,
   disabled,
-  required = true,
+  required = false,
   value,
   onChange,
   readonly = false,
@@ -58,7 +59,7 @@ export default function FieldInput({
         onFocus={onFocus}
         onBlur={onBlur}
         id={id}
-        className={`h-9 ${disabled ? 'border-0 bg-gray-100' : 'border bg-gray-50 text-primary placeholder-primary'} outline-none border border-gray-400 text-sm font-medium rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2.5 py-1`}
+        className={`h-9 ${disabled ? 'border-0 bg-gray-100' : 'border bg-gray-50 text-primary placeholder-secondary/80'} outline-none border border-gray-400 text-sm font-medium rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2.5 py-1`}
         placeholder={placeholder}
         required={required}
         onChange={handleChangeInput}

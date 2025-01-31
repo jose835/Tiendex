@@ -4,7 +4,6 @@ import FieldInput from '../../components/forms/FieldInput';
 import FieldSelect from '../../components/forms/FieldSelect';
 import Line from '../../components/Line';
 import PrependChildInput from '../../components/PrependChildInput';
-import { FONTS } from '../../constants/constants';
 import { PlusCirle } from '../../icons/icons';
 import { AddProductProps, CategoryOption, CountryProps } from '../../types/types';
 import { getCountries } from '../../api/general/general';
@@ -36,7 +35,7 @@ const ShippingProduct: React.FC<Props> = ({ formData, handleInputChange, showInp
   return (
     <div className="bg-white rounded-lg mt-8 py-5">
       <div className='mx-4 mb-5'>
-        <h2 className={`${FONTS.title} mb-3`}>Envío</h2>
+        <h2 className={`font-semibold text-[15px] mb-3`}>Envío</h2>
         <CheckBox
           name="Este es un producto físico"
           onChange={(value) => handleCheckboxChange('physical', value)}
@@ -57,13 +56,13 @@ const ShippingProduct: React.FC<Props> = ({ formData, handleInputChange, showInp
       <Line />
       <div className='mx-4'>
         {!showInputs.physical ? (
-          <span className={`${FONTS.subtitle} mt-4 inline-block`}>
+          <span className={`font-medium text-secondary text-sm mt-4 inline-block`}>
             Los clientes no ingresarán los detalles de envío al finalizar la compra. Aprenda cómo configurar su tienda para productos o servicios digitales.
           </span>
         ) : showInputs.customInformation ? (
           <div className='mt-3'>
             <div className='flex items-center'>
-              <span className={`${FONTS.subtitle} mr-2`}>País/Región de origen</span>
+              <span className={`font-medium text-secondary text-sm mr-2`}>País/Región de origen</span>
               <PrependChildInput message='En la mayoría de los casos, donde se fabricó o ensambló el producto' id='country' />
             </div>
             <Select onChange={(value) => handleInputChange('productOrigin', value)} value={countries} placeholder='Elegir país/región de origen' />

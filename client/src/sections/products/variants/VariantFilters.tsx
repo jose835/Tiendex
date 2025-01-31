@@ -87,7 +87,7 @@ export default function VariantFilters({ variants, setCombinations }: Props) {
             <div className='space-x-2 flex items-center'>
               <span className='font-medium text-[13px] text-secondary/80'>Agrupar por</span>
               <DropDown
-                className='bg-transparent border border-gray-300'
+                className='bg-transparent'
                 name={selectedVariant.name}
                 options={variants.map((variant, index) => (
                   <li
@@ -106,19 +106,20 @@ export default function VariantFilters({ variants, setCombinations }: Props) {
         </div>
         {!isShowFilter ? (
           <button onClick={() => setIsShowFilter(true)} type='button' data-tooltip-id="search" className='bg-white hover:bg-[#F7F7F7] text-secondary/80 cursor-pointer shadow-md border border-gray-300 h-7 px-1.5 ml-1 flex items-center justify-center rounded-md'>
-            <Search size={20} />
+            <Search className='size-5' />
             <Filter />
             <ToolTip id="search" title="Buscar y filtrar (F)" />
           </button>
         ) : (
-          <Button onClick={() => { setTextSearch(''); setIsShowFilter(false); }} name='Cancelar' />
+          <Button style='primary' onClick={() => { setTextSearch(''); setIsShowFilter(false); }} name='Cancelar' />
         )}
       </div>
 
       <div className={`transition-all duration-300 ease-in-out ${isShowFilter ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
         <FieldInputWithElement
           className="mb-3"
-          appendChild={<Search size={20} />}
+          required={false}
+          appendChild={<Search className='size-5' />}
           placeholder="Buscar"
           value={textSearch}
           onChange={(e) => setTextSearch(e.target.value)}

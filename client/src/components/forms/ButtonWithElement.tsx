@@ -1,14 +1,15 @@
 interface Props {
-  name: string;
+  name?: string;
   className?: string;
   appendIcon?: JSX.Element,
   onClick?: () => void;
+  style?: 'primary' | 'secondary' | 'none';
 }
 
-export default function ButtonWithElement({ name, className, appendIcon, onClick }: Props) {
+export default function ButtonWithElement({ style, name, className, appendIcon, onClick }: Props) {
   return (
-    <button onClick={onClick}
-      className={`px-3 py-2 font-semibold inline-flex items-center ${className} rounded-lg text-xs`}>
+    <button type="button" onClick={onClick}
+      className={`font-semibold ${style === 'secondary' ? 'bg-gradient-primary-base active:bg-[#1a1a1a] hover:bg-[#1a1a1a] text-white shadow-button-primary active:shadow-button-primary-pressed bg-gradient-primary' : style === 'primary' ? 'shadow-default active:shadow-pressed' : ''} inline-flex items-center rounded-lg text-xs ${className}`}>
       {appendIcon}
       {name}
     </button>

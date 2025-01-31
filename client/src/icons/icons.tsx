@@ -1,7 +1,7 @@
 import { COLORS } from "../constants/constants";
 
-export const Search = ({ size = 18 }: { size?: number }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={"currentColor"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-search">
+export const Search = ({ className }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={`${className} icon icon-tabler icons-tabler-outline icon-tabler-search`}>
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
     <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
     <path d="M21 21l-6 -6" />
@@ -34,8 +34,8 @@ export const Orders = () => (
   </svg>
 )
 
-export const Products = () => (
-  <svg width="24" height="24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+export const Products = ({ className }: { className?: string }) => (
+  <svg width="24" height="24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className={className}>
     <path d="M20.402 2.25h-5.761c-.18 0-.351.07-.478.197L2.646 13.964a1.352 1.352 0 0 0 0 1.908l5.484 5.484a1.353 1.353 0 0 0 1.908 0L21.55 9.844a.678.678 0 0 0 .197-.478V3.6a1.344 1.344 0 0 0-1.345-1.35Z"></path>
     <path fill="currentColor" stroke="none" d="M18 7.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z"></path>
   </svg>
@@ -49,8 +49,8 @@ export const Customers = () => (
   </svg>
 )
 
-export const Content = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-photo">
+export const Content = ({ className }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className={`icon icon-tabler icons-tabler-outline icon-tabler-photo ${className}`}>
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
     <path d="M15 8h.01" />
     <path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z" />
@@ -170,8 +170,8 @@ export const Close = ({ className }: { className?: string }) => (
   </svg>
 )
 
-export const Up = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-chevron-up">
+export const Up = ({ className }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={`${className} icon icon-tabler icons-tabler-outline icon-tabler-chevron-up`}>
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
     <path d="M6 15l6 -6l6 6" />
   </svg>

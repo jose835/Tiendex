@@ -7,9 +7,10 @@ interface Props {
   onClickSave?: () => void;
   name: string;
   children: React.ReactNode;
+  classNameModal?: string;
 }
 
-export default function Modal({ onClose, name, onClickSave, children }: Props) {
+export default function Modal({ onClose, name, onClickSave, children, classNameModal }: Props) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isScrolledToEnd, setIsScrolledToEnd] = useState(true);
 
@@ -53,7 +54,7 @@ export default function Modal({ onClose, name, onClickSave, children }: Props) {
       className="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 bottom-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50"
     >
       <div className="relative p-4 w-full max-w-2xl max-h-full">
-        <div className="relative bg-white rounded-2xl shadow">
+        <div className="relative h-full bg-white rounded-2xl shadow">
           <header
             className={`flex ${isScrolled && 'shadow-md'} bg-whiting2 items-center justify-between px-4 py-2 border-b border-gray-300 rounded-t-2xl`}
           >
@@ -69,11 +70,10 @@ export default function Modal({ onClose, name, onClickSave, children }: Props) {
           </header>
           <main
             ref={mainRef}
-            className="max-h-[600px] py-4e overflow-y-auto"
+            className={`overflow-y-auto ${classNameModal}`}
             style={{ scrollbarWidth: 'thin' }}
           >
             {children}
-
           </main>
           <footer
             style={{
@@ -87,6 +87,7 @@ export default function Modal({ onClose, name, onClickSave, children }: Props) {
             <Button
               onClick={onClickSave}
               name="Listo"
+
               className="bg-primary px-5 text-white"
             />
           </footer>

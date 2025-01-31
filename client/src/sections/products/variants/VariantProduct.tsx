@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { PlusCirle } from '../../../icons/icons';
-import { FONTS } from '../../../constants/constants';
-import { Variant } from '../../../types/types';
+import { CombinationProps, Variant } from '../../../types/types';
 import VariantTable from './VariantTable';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import FormVariant from './FormVariant';
 import VariantCard from './VariantCard';
+import { v4 as uuid } from 'uuid'
 
 interface Props {
   showInputs: {
@@ -15,12 +16,16 @@ interface Props {
     customInformation: boolean;
     variant: boolean;
   };
+  variants: Variant[];
+  setVariants: Dispatch<SetStateAction<Variant[]>>;
+  combinations: CombinationProps[];
+  setCombinations: Dispatch<SetStateAction<CombinationProps[]>>;
   handleCheckboxChange: (name: string, value: boolean) => void;
 }
 
-export default function VariantProduct({ showInputs, handleCheckboxChange }: Props) {
+export default function VariantProduct({ combinations, setCombinations, setVariants, variants, showInputs, handleCheckboxChange }: Props) {
   const MAX_VARIANTS = 2;
-  const [variants, setVariants] = useState<Variant[]>([]);
+
 
   const isVariantTableVisible = variants.some(variant =>
     variant.options.some(option => option.name.trim() !== '')
@@ -33,7 +38,7 @@ export default function VariantProduct({ showInputs, handleCheckboxChange }: Pro
       isEditing: true,
       price: 0,
       quantity: 0,
-      options: [{ name: '', price: 0, quantity: 0, visible: true, isChecked: false, sku: '', barCode: '', weight: '' }],
+      options: [{ id: uuid(), name: '', price: 0, quantity: 0, visible: true, isChecked: false, sku: '', barCode: '', weight: '', country: '', sellingOutStock: false, isEliminated: false }],
     }
 
     setVariants(prev => [
@@ -42,18 +47,34 @@ export default function VariantProduct({ showInputs, handleCheckboxChange }: Pro
     ]);
   };
 
-  const handleDragEnd = () => {
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
 
-  }
+    if (!over) return;
+
+    if (active.id !== over.id) {
+      setVariants((prev) => {
+        const oldIndex = prev.findIndex((variant) => variant.id === active.id);
+        const newIndex = prev.findIndex((variant) => variant.id === over.id);
+
+        const reorderedVariants = [...prev];
+        const [movedVariant] = reorderedVariants.splice(oldIndex, 1);
+        reorderedVariants.splice(newIndex, 0, movedVariant);
+
+        return reorderedVariants;
+      });
+    }
+  };
 
   return (
     <div className="bg-white border border-gray-300 rounded-lg mt-8 pt-5">
-      <h2 className={`${FONTS.title} mb-3 mx-4`}>Variantes</h2>
+      <h2 className={`font-semibold text-[15px] mb-3 mx-4`}>Variantes</h2>
 
       {showInputs.variant && variants.length > 0 ? (
         <div className="border border-gray-300 rounded-md mx-4 mb-5">
           <DndContext
             collisionDetection={closestCenter}
+            modifiers={[restrictToVerticalAxis]}
             onDragEnd={handleDragEnd}
           >
             <SortableContext
@@ -114,7 +135,7 @@ export default function VariantProduct({ showInputs, handleCheckboxChange }: Pro
         </button>
       )}
 
-      {isVariantTableVisible && <VariantTable variants={variants} />}
+      {isVariantTableVisible && <VariantTable combinations={combinations} setCombinations={setCombinations} setVariants={setVariants} variants={variants} />}
     </div>
   );
 }

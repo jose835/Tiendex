@@ -33,6 +33,7 @@ export default function GeneralInformation({ formData, handleInputChange }: Prop
       <FieldInput
         onChange={(e) => handleInputChange('name', e.target.value)}
         name="Titulo"
+        required
         placeholder="Ej: Camiseta de manga corta"
         id="title"
         value={formData.name}

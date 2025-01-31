@@ -7,6 +7,8 @@ import "./index.css";
 import Home from './pages/Home';
 import AddProduct from './pages/products/AddProduct';
 import Products from './pages/products/Products';
+import Collections from './pages/products/collection/Collections';
+import AddCollection from './pages/products/collection/AddCollection';
 
 const router = createBrowserRouter([
   {
@@ -20,6 +22,14 @@ const router = createBrowserRouter([
   {
     path: '/products',
     element: <Products />
+  },
+  {
+    path: '/collections',
+    element: <Collections />
+  },
+  {
+    path: '/collections/add',
+    element: <AddCollection />
   }
 ]);
 

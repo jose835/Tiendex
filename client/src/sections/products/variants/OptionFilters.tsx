@@ -38,7 +38,6 @@ export default function OptionFilters({ variants, setCombinations, setSelectedVa
   useEffect(() => {
     setCombinations(prevCombinations => {
       return prevCombinations.map(combination => {
-        // Si no hay selectedOptions, restablece todo a visible
         if (selectedOptions.length === 0) {
           return {
             ...combination,
@@ -50,45 +49,30 @@ export default function OptionFilters({ variants, setCombinations, setSelectedVa
           };
         }
 
-        // Inicializa la combinación como no visible
         const updatedCombination = { ...combination, visible: false };
 
-        // Lógica para cuando hay dos elementos en selectedOptions
         if (selectedOptions.length === 2) {
           const [firstSelection, secondSelection] = selectedOptions;
 
-          // Verificamos si alguno de los elementos en selectedOptions coincide con el optionName de la combinación
           const firstMatchesOptionName = firstSelection.optionName === combination.optionName;
           const secondMatchesOptionName = secondSelection.optionName === combination.optionName;
 
-          // Caso en que el primer elemento coincide con optionName
           if (firstMatchesOptionName) {
-            // Marcamos la combinación como visible
             updatedCombination.visible = true;
 
-            // Establecemos visibilidad en las opciones de acuerdo con el segundo elemento de selectedOptions
             updatedCombination.options = updatedCombination.options.map(option => ({
               ...option,
               visible: option.name === secondSelection.optionName,
             }));
-
-            // Caso en que el segundo elemento coincide con optionName
           } else if (secondMatchesOptionName) {
-            // Marcamos la combinación como visible
             updatedCombination.visible = true;
-
-            // Establecemos visibilidad en las opciones de acuerdo con el primer elemento de selectedOptions
             updatedCombination.options = updatedCombination.options.map(option => ({
               ...option,
               visible: option.name === firstSelection.optionName,
             }));
           }
-
-          // Lógica para cuando hay un solo elemento en selectedOptions
         } else if (selectedOptions.length === 1) {
           const singleSelection = selectedOptions[0];
-
-          // Si coincide el optionName, mostramos todas las opciones
           if (singleSelection.optionName === combination.optionName) {
             updatedCombination.visible = true;
             updatedCombination.options = updatedCombination.options.map(option => ({
@@ -96,7 +80,6 @@ export default function OptionFilters({ variants, setCombinations, setSelectedVa
               visible: true,
             }));
           } else {
-            // Si no coincide con optionName, pero coincide con alguna opción, mostramos solo esa opción
             updatedCombination.options = updatedCombination.options.map(option => ({
               ...option,
               visible: option.name === singleSelection.optionName,
@@ -137,6 +120,7 @@ export default function OptionFilters({ variants, setCombinations, setSelectedVa
     <div className="mb-3 space-x-2">
       {variants.map((variant, variantIndex) => (
         <DropDown
+          shadow={false}
           key={variantIndex}
           icon={
             selectedOptions.some(selected => selected.id === variant.id) && (

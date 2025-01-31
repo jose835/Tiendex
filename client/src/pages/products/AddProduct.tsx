@@ -9,14 +9,13 @@ import OrganizationProduct from '../../sections/products/OrganizationProduct';
 import { Back } from '../../icons/icons';
 import { useRef, useState } from 'react';
 import VariantProduct from '../../sections/products/variants/VariantProduct';
-import { FONTS } from '../../constants/constants';
-import { AddProductProps, ProductProps } from '../../types/types';
-import { createProduct } from '../../api/inventory/product';
+import { AddProductProps, CombinationProps, Variant } from '../../types/types';
+import { createCombination, createProduct, createProductPrice, createVariant } from '../../api/inventory/product';
 import { showToast } from '../../components/Toast';
+import { v4 as uuid } from 'uuid'
 
 export default function AddProduct() {
-  const formRef = useRef<HTMLFormElement>(null);
-  const [formData, setFormData] = useState<AddProductProps>({
+  const INITIAL_FORM_DATA = {
     subCategoryId: '',
     name: '',
     description: '',
@@ -36,8 +35,12 @@ export default function AddProduct() {
     comparePrice: 0,
     cost: 0,
     isTax: false,
-    product_variants: []
-  });
+  }
+
+  const [formData, setFormData] = useState<AddProductProps>(INITIAL_FORM_DATA);
+  const formRef = useRef<HTMLFormElement>(null);
+  const [variants, setVariants] = useState<Variant[]>([]);
+  const [combinations, setCombinations] = useState<CombinationProps[]>([]);
 
   const [showInputs, setShowInputs] = useState({
     sku: false,
@@ -59,46 +62,70 @@ export default function AddProduct() {
     e.preventDefault();
     e.stopPropagation();
 
-    const newProduct: ProductProps = {
+    const productId = uuid();
+
+    const newProduct = {
+      productId: productId,
       name: formData.name,
       description: formData.description,
-      state: formData.state,
       subCategoryId: formData.subCategoryId,
-      product_price: {
-        price: formData.price,
-        comparePrice: formData.comparePrice,
-        cost: formData.cost,
-        revenue: formData.price - formData.cost,
-        margin: ((formData.price - formData.cost) / formData.price) * 100,
-        isTax: formData.isTax
-      },
-      organization_product: {
-        productType: formData.productType,
-        productVendor: formData.productVendor,
-        productCollection: formData.productCollection,
-        productTag: formData.productTag,
-        productOrigin: formData.productOrigin
-      },
-      product_inventory: {
-        unitMeasureId: formData.unitMeasureId,
-        weight: formData.weight,
-        minStock: formData.minStock,
-        sellOutStock: formData.sellOutStock
-      },
-      product_identifier: {
-        sku: formData.sku,
-        barCode: formData.barCode
-      },
-      product_variants: []
+      state: formData.state,
+    }
+
+    const productPrice = {
+      "product": productId,
+      "price": formData.price,
+      "comparePrice": formData.comparePrice,
+      "cost": formData.cost,
+      "isTax": formData.isTax
     }
 
     const { success, error } = await createProduct(newProduct);
 
+    if (variants.length === 0) {
+      await createProductPrice(productPrice);
+    } else {
+      saveVariants(productId)
+    }
+
     if (success) {
       showToast('Producto agregado exitosamente', true);
+      clearForm();
     } else {
       showToast(error.message, false);
     }
+  }
+
+  function saveVariants(productId: string) {
+    variants.forEach(async (variant) => {
+      const newVariant = {
+        productId: productId,
+        name: variant.name,
+        options: variant.options.filter(option => option.name.trim() !== '').map(option => option.name)
+      }
+
+      await createVariant(newVariant);
+    })
+
+    saveCombinations(productId);
+  }
+
+  function saveCombinations(productId: string) {
+    combinations.forEach(async (combination) => {
+      const newCombination = {
+        productId: productId,
+        name: combination.optionName,
+        options: combination.options.map(option => {
+          return {
+            name: option.name,
+            price: option.price
+          }
+        }),
+        price: combination.variantPrice
+      }
+
+      await createCombination(newCombination);
+    })
   }
 
   function handleClickSubmit() {
@@ -107,13 +134,19 @@ export default function AddProduct() {
     }
   }
 
+  function clearForm() {
+    setFormData(INITIAL_FORM_DATA)
+    setVariants([])
+    setCombinations([])
+  }
+
   return (
     <Container text='Producto sin guardar' save onSaveClick={handleClickSubmit}>
       <section className="flex flex-col items-center h-full">
         <div className="max-w-screen-lg mt-5 w-full mx-auto">
           <header className="flex items-center">
             <Back />
-            <h2 className="ml-4 text-lg font-semibold text-secondary">Agregar producto</h2>
+            <h2 onClick={() => saveVariants(uuid())} className="ml-4 text-lg font-semibold text-secondary">Agregar producto</h2>
           </header>
 
           <main className="flex flex-col md:flex-row items-start">
@@ -123,14 +156,14 @@ export default function AddProduct() {
                 <InventoryProduct formData={formData} handleInputChange={handleInputChange} showInputs={showInputs} handleCheckboxChange={handleCheckboxChange} />
                 <PriceProduct handleInputChange={handleInputChange} formData={formData} />
                 <ShippingProduct handleInputChange={handleInputChange} formData={formData} showInputs={showInputs} handleCheckboxChange={handleCheckboxChange} />
-                <VariantProduct showInputs={showInputs} handleCheckboxChange={handleCheckboxChange} />
+                <VariantProduct combinations={combinations} setCombinations={setCombinations} setVariants={setVariants} variants={variants} showInputs={showInputs} handleCheckboxChange={handleCheckboxChange} />
 
                 <div className="bg-white rounded-lg mt-8 px-4 py-5">
                   <div className='flex items-center justify-between'>
-                    <h2 className={`${FONTS.title} mb-2`}>Listado de motores de búsqueda</h2>
+                    <h2 className={`font-semibold text-[15px] mb-2`}>Listado de motores de búsqueda</h2>
                     <button className='text-[#4781d0] text-sm font-semibold hover:underline'>Editar</button>
                   </div>
-                  <p className={FONTS.subtitle}>Add a title and description to see how this product might appear in a search engine listing</p>
+                  <p className="font-medium text-secondary text-sm">Add a title and description to see how this product might appear in a search engine listing</p>
                 </div>
               </div>
 

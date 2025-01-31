@@ -4,10 +4,11 @@ export const COLORS = {
   whiting: '#6b6b6b',
   whiting2: '#ebebeb',
   graying: '#808080',
-  redprimary: '#d70000'
-}
-
-export const FONTS = {
-  title: 'font-semibold text-[15px]',
-  subtitle: 'font-medium text-secondary text-sm'
+  redprimary: '#d70000',
+  darkred: '#d10000',
+  redsecondary: '#ffabab',
+  blueprimary: '#005bd3',
+  bluesecondary: '#4781ce',
+  greenprimary: '#affebf',
+  darkgreen: '#014b40'
 }

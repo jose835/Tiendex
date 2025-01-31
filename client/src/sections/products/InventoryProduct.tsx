@@ -1,7 +1,6 @@
 import CheckBox from '../../components/forms/CheckBox';
 import FieldInput from '../../components/forms/FieldInput';
 import Line from '../../components/Line';
-import { FONTS } from '../../constants/constants';
 import { AddProductProps } from '../../types/types';
 
 interface Props {
@@ -21,7 +20,7 @@ const InventoryProduct: React.FC<Props> = ({ showInputs, handleCheckboxChange, f
   return (
     <div className="bg-white rounded-lg mt-8 py-5">
       <div className='mx-4'>
-        <h2 className={`${FONTS.title} mb-3`}>Inventario</h2>
+        <h2 className={`font-semibold text-[15px] mb-3`}>Inventario</h2>
         <CheckBox className='mb-5' name="Cantidad de seguimiento" onChange={(value) => handleCheckboxChange('minStock', value)} initialValue={false} />
 
         {showInputs.minStock && <FieldInput value={formData.minStock} onChange={(e) => handleInputChange('minStock', e.target.value)} id='minStock' name='Cantidad' isNumber className='w-56 mb-5' />}

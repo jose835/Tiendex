@@ -3,6 +3,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { Variant } from '../../../types/types';
 import { GridDots } from '../../../icons/icons';
 import { Dispatch, SetStateAction, useState } from 'react';
+import { COLORS } from '../../../constants/constants';
 
 interface Props {
   variant: Variant;
@@ -11,12 +12,17 @@ interface Props {
 }
 
 export default function VariantCard({ variant, setVariants, variantIndex }: Props) {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: variant.id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging: dndIsDragging } = useSortable({ id: variant.id });
   const [isDragging, setIsDragging] = useState(false);
 
   const styles = {
     transform: CSS.Transform.toString(transform),
-    transition
+    transition: isDragging || dndIsDragging ? "none" : transition,
+    zIndex: 1000,
+    backgroundColor: isDragging || dndIsDragging ? 'white' : '',
+    borderWidth: isDragging || dndIsDragging ? 2 : 0,
+    borderRadius: isDragging || dndIsDragging ? 4 : 0,
+    borderColor: isDragging || dndIsDragging ? COLORS.blueprimary : '',
   };
 
   const handleMouseDown = () => setIsDragging(true);
@@ -26,9 +32,9 @@ export default function VariantCard({ variant, setVariants, variantIndex }: Prop
     <div
       style={styles}
       ref={setNodeRef}
-      className="flex hover:bg-whiting2 cursor-pointer w-full h-full p-4 items-center space-x-3"
+      className={`flex z-50 hover:bg-whiting2 cursor-pointer w-full h-full p-4 items-center space-x-3`}
       onClick={() => {
-        setVariants(prev => {
+        setVariants((prev) => {
           const updated = [...prev];
           updated[variantIndex].isEditing = true;
           return updated;
@@ -38,6 +44,7 @@ export default function VariantCard({ variant, setVariants, variantIndex }: Prop
       <div
         {...attributes}
         {...listeners}
+        tabIndex={-1}
         className={isDragging ? "cursor-grabbing" : "cursor-grab"}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}

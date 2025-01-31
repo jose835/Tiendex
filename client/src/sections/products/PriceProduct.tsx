@@ -3,7 +3,6 @@ import FieldInput from '../../components/forms/FieldInput';
 import FieldInputWithElement from '../../components/forms/FieldInputWithElement';
 import PrependChildInput from '../../components/PrependChildInput';
 import Line from '../../components/Line';
-import { FONTS } from '../../constants/constants';
 import { AddProductProps } from '../../types/types';
 
 interface Props {
@@ -15,7 +14,7 @@ const PriceProduct = ({ formData, handleInputChange }: Props) => {
   return (
     <div className="bg-white rounded-lg mt-8 py-5">
       <div className="mx-4">
-        <h2 className={`${FONTS.title} mb-3`}>Precios</h2>
+        <h2 className={`font-semibold text-[15px] mb-3`}>Precios</h2>
         <div className="mb-8">
           <div className="flex flex-col md:flex-row mb-5">
             <FieldInput

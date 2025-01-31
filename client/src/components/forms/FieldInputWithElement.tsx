@@ -17,6 +17,7 @@ interface Props {
   readonly?: boolean;
   onFocus?: (e: ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (e: ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 export default function FieldInputWithElement({
@@ -30,8 +31,9 @@ export default function FieldInputWithElement({
   onBlur,
   isNumber = false,
   autofocus,
+  onKeyDown,
   disabled,
-  required = true,
+  required = false,
   value,
   onChange,
   readonly = false
@@ -87,6 +89,7 @@ export default function FieldInputWithElement({
             onFocus={handleFocus}
             onBlur={handleBlur}
             onChange={handleChangeInput}
+            onKeyDown={onKeyDown}
             value={inputValue}
             autoFocus={autofocus}
             readOnly={readonly}

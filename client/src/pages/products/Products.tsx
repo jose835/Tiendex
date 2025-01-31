@@ -29,7 +29,7 @@ export default function Products() {
 
   return (
     <Container>
-      <section className="p-5">
+      <section>
         {products.length !== 0 ? (
           <>
             <ProductsHeader />

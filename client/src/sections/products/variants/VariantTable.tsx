@@ -1,16 +1,19 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, Dispatch, SetStateAction } from 'react';
 import { Variant, CombinationProps, Option } from '../../../types/types';
 import VariantRowTable from './VariantRowTable';
 import VariantFilters from './VariantFilters';
 import TableHeader from './TableHeader';
 import VariantDropDown from './VariantDropDown';
+import { Search } from '../../../icons/icons';
 
 interface Props {
   variants: Variant[];
+  combinations: CombinationProps[];
+  setVariants: Dispatch<SetStateAction<Variant[]>>;
+  setCombinations: Dispatch<SetStateAction<CombinationProps[]>>;
 }
 
-export default function VariantTable({ variants }: Props) {
-  const [combinations, setCombinations] = useState<CombinationProps[]>([]);
+export default function VariantTable({ combinations, setCombinations, variants, setVariants }: Props) {
   const [expandedAll, setExpandedAll] = useState<boolean>(false);
   const [isShowDropDown, setIsShowDropDown] = useState<boolean>(false);
   const combinationRef = useRef<CombinationProps[]>([]);
@@ -48,34 +51,48 @@ export default function VariantTable({ variants }: Props) {
         comb => comb.variantName === firstVariant.name && comb.optionName === option.name
       );
 
-      combinations.push({
-        variantName: firstVariant.name,
-        optionName: option.name,
-        visible: true,
-        variantBarCode: existingCombination ? existingCombination.variantBarCode : '',
-        variantSku: existingCombination ? existingCombination.variantSku : '',
-        variantWeight: existingCombination ? existingCombination.variantWeight : '',
-        variantCountry: existingCombination ? existingCombination.variantCountry : '',
-        isChecked: existingCombination ? existingCombination.options.length > 0 ? existingCombination.options.every(option => option.isChecked) : existingCombination.isChecked : false,
-        variantSellingOutStock: existingCombination ? existingCombination.variantSellingOutStock : false,
-        variantPrice: existingCombination ? existingCombination.variantPrice : firstVariant.price,
-        variantQuantity: existingCombination ? existingCombination.variantQuantity : firstVariant.quantity,
-        options: groupedOptions.map(combination => {
-          const combinedOption: Option = {
-            name: combination.map(opt => opt.name).join(' / '),
-            sku: combination.find(opt => opt.sku)?.sku || '',
-            barCode: combination.find(opt => opt.barCode)?.barCode || '',
-            weight: combination.find(opt => opt.weight)?.weight || '',
-            country: combination.find(opt => opt.country)?.country || '',
-            sellingOutStock: combination.find(opt => opt.sellingOutStock)?.sellingOutStock || false,
-            price: combination.reduce((total, opt) => total + (existingCombination ? existingCombination.options.find(o => o.name === opt.name)?.price || opt.price : opt.price), 0),
-            quantity: Math.min(...combination.map(opt => existingCombination ? existingCombination.options.find(o => o.name === opt.name)?.quantity || opt.quantity : opt.quantity)),
-            visible: true,
-            isChecked: combination.some(opt => existingCombination ? existingCombination.options.find(o => o.name === opt.name)?.isChecked : opt.isChecked),
-          };
-          return combinedOption;
-        }),
-      });
+      if (!existingCombination?.variantIsEliminated) {
+        combinations.push({
+          variantName: firstVariant.name,
+          optionName: option.name,
+          visible: true,
+          variantBarCode: existingCombination ? existingCombination.variantBarCode : '',
+          variantIsEliminated: existingCombination ? existingCombination.variantIsEliminated : false,
+          variantSku: existingCombination ? existingCombination.variantSku : '',
+          variantWeight: existingCombination ? existingCombination.variantWeight : '',
+          variantCountry: existingCombination ? existingCombination.variantCountry : '',
+          isChecked: existingCombination ? existingCombination.options.length > 0 ? existingCombination.options.every(option => option.isChecked) : existingCombination.isChecked : false,
+          variantSellingOutStock: existingCombination ? existingCombination.variantSellingOutStock : false,
+          variantPrice: existingCombination ? existingCombination.variantPrice : firstVariant.price,
+          variantQuantity: existingCombination ? existingCombination.variantQuantity : firstVariant.quantity,
+          options: groupedOptions.map(combination => {
+            const combinedOption: Option = {
+              id: combination.find(opt => opt.id)?.id || '',
+              name: combination.map(opt => opt.name).join(' / '),
+              sku: combination.map(opt => existingCombination ? existingCombination.options.find(o => o.name === opt.name)?.sku || opt.sku : opt.sku).join(','),
+              isEliminated: combination.some(opt => existingCombination ? existingCombination.options.find(o => o.name === opt.name)?.isEliminated : opt.isEliminated),
+              barCode: combination.map(opt => existingCombination ? existingCombination.options.find(o => o.name === opt.name)?.barCode || opt.barCode : opt.barCode).join(','),
+              weight: combination.map(opt => existingCombination ? existingCombination.options.find(o => o.name === opt.name)?.weight || opt.weight : opt.weight).join(','),
+              country: combination.map(opt => existingCombination ? existingCombination.options.find(o => o.name === opt.name)?.country || opt.country : opt.country).join(','),
+              sellingOutStock: combination.some(opt => existingCombination ? existingCombination.options.find(o => o.name === opt.name)?.sellingOutStock : opt.sellingOutStock),
+              price: combination.reduce((total, opt) => total + (existingCombination ? existingCombination.options.find(o => o.name === opt.name)?.price || opt.price : opt.price), 0),
+              quantity: Math.min(...combination.map(opt => existingCombination ? existingCombination.options.find(o => o.name === opt.name)?.quantity || opt.quantity : opt.quantity)),
+              isChecked: combination.some(opt => existingCombination ? existingCombination.options.find(o => o.name === opt.name)?.isChecked : opt.isChecked),
+              visible: true,
+            };
+            return combinedOption;
+          }),
+        });
+      } else {
+
+        const newVariant = variants
+          .map(variant => ({
+            ...variant,
+            options: variant.options.filter(option => option.name !== existingCombination.optionName),
+          })).filter(variant => variant.options.length > 0);
+
+        setVariants(newVariant);
+      }
     }
 
     combinations.forEach((combination) => {
@@ -91,7 +108,7 @@ export default function VariantTable({ variants }: Props) {
     });
 
     return combinations;
-  }, [variants]);
+  }, [variants, setVariants]);
 
   useEffect(() => {
     setCombinations(prevCombinations => getCombinations(prevCombinations))
@@ -166,47 +183,67 @@ export default function VariantTable({ variants }: Props) {
     }, 0);
   };
 
+  const allCombinationsAndOptionsInvisible = combinations.every(combination =>
+    !combination.visible && combination.options.every(option => !option.visible)
+  );
+
   return (
-    <>
+    <div className='relative'>
       <VariantFilters variants={variants} setCombinations={setCombinations} />
       <div className="relative overflow-hidden">
         <table className="w-full text-sm text-left">
-          <TableHeader
-            setCombinations={setCombinations}
-            isShowDropDown={isShowDropDown}
-            setIsShowDropDown={setIsShowDropDown}
-            combinations={combinations}
-            expandedAll={expandedAll}
-            setExpandedAll={setExpandedAll}
-            getCheckedCount={getCheckedCount}
-            variants={variants}
-          />
+          {!allCombinationsAndOptionsInvisible && (
+            <TableHeader
+              allCombinationsAndOptionsInvisible={allCombinationsAndOptionsInvisible}
+              setCombinations={setCombinations}
+              isShowDropDown={isShowDropDown}
+              setIsShowDropDown={setIsShowDropDown}
+              combinations={combinations}
+              expandedAll={expandedAll}
+              setExpandedAll={setExpandedAll}
+              getCheckedCount={getCheckedCount}
+              variants={variants}
+            />
+          )}
           <tbody>
-            {combinations.map((combination, variantIndex) => (
-              <VariantRowTable
-                setCombinations={setCombinations}
-                expandedAll={expandedAll}
-                key={variantIndex}
-                combination={combination}
-                calculateTotalQuantity={calculateTotalQuantity}
-                handleOptionValueChange={handleOptionValueChange}
-                handleOptionValueVariantChange={handleOptionValueVariantChange}
-                variantIndex={variantIndex}
-              />
-            ))}
+            {combinations.length > 0 && !allCombinationsAndOptionsInvisible ? (
+              combinations.map((combination, variantIndex) => (
+                <VariantRowTable
+                  setCombinations={setCombinations}
+                  expandedAll={expandedAll}
+                  key={variantIndex}
+                  combination={combination}
+                  calculateTotalQuantity={calculateTotalQuantity}
+                  handleOptionValueChange={handleOptionValueChange}
+                  handleOptionValueVariantChange={handleOptionValueVariantChange}
+                  variantIndex={variantIndex}
+                />
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5}>
+                  <div className="flex mb-8 pt-4 flex-col border-t border-gray-300 items-center">
+                    <Search className='size-24 text-graying' />
+                    <p className="mt-4 text-xl text-primary font-semibold ">No se encontró ningún recurso de variantes</p>
+                    <p className='mt-3 text-sm text-secondary/80 font-medium'>Prueba a cambiar los filtros o el término de búsqueda</p>
+                  </div>
+                </td>
+              </tr>
+            )}
           </tbody>
+
+
         </table>
-        <footer className='py-3 bg-whiting2 rounded-b-md  flex items-center justify-center'>
+        <footer className='py-3 bg-whiting2 rounded-b-md  border-t border-gray-300 flex items-center justify-center'>
           <span className='text-sm font-medium text-primary'>{`Inventario total de su tienda: ${variants.length !== 1
             ? calculateTotalQuantity(combinations.map(combination => combination.options).flat())
             : combinations.reduce((total, combination) => total + combination.variantQuantity, 0)} disponibles`}
           </span>
         </footer>
-
-        {getCheckedCount() > 0 && isShowDropDown &&
-          <VariantDropDown combinations={combinations} setIsShowDropDown={setIsShowDropDown} setCombinations={setCombinations} />
-        }
       </div>
-    </>
+      {getCheckedCount() > 0 && isShowDropDown &&
+        <VariantDropDown setVariants={setVariants} getCheckedCount={getCheckedCount} combinations={combinations} setIsShowDropDown={setIsShowDropDown} setCombinations={setCombinations} />
+      }
+    </div>
   );
 }

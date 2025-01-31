@@ -7,7 +7,6 @@ export interface StepsProps {
   imageUrl: string;
 }
 
-
 export interface CategoryOption {
   label: string;
   value: string;
@@ -33,6 +32,7 @@ export interface CountryProps {
 }
 
 export interface Option {
+  id: string;
   name: string;
   sku: string;
   barCode: string;
@@ -43,6 +43,18 @@ export interface Option {
   visible: boolean;
   sellingOutStock: boolean;
   isChecked: boolean;
+  isEliminated: boolean;
+}
+
+export interface ProductActive {
+  IDProduct: string;
+  name: string;
+  state: boolean;
+}
+
+export interface SelectOptions {
+  name: string;
+  value: string | number;
 }
 
 export interface SelectedOption {
@@ -72,6 +84,7 @@ export interface CombinationProps {
   variantSellingOutStock: boolean;
   options: Option[];
   visible: boolean;
+  variantIsEliminated: boolean;
   isChecked: boolean;
 }
 
@@ -131,7 +144,7 @@ export interface AddProductProps {
   subCategoryId: string,
   name: string,
   description: string,
-  state: true,
+  state: boolean,
   productCollection: string,
   productOrigin: string,
   productType: string,
@@ -146,6 +159,5 @@ export interface AddProductProps {
   price: number,
   comparePrice: number,
   cost: number,
-  isTax: false,
-  product_variants: []
+  isTax: boolean,
 }

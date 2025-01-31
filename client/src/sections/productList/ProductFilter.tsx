@@ -1,3 +1,4 @@
+import ButtonWithElement from "../../components/forms/ButtonWithElement";
 import ToolTip from "../../components/forms/ToolTip";
 import { Filter, Search, Sort } from "../../icons/icons";
 
@@ -21,17 +22,23 @@ const ProductsFilters: React.FC<ProductsFiltersProps> = ({ filters, activeFilter
         ))}
       </div>
       <div className="flex items-center">
-        <div data-tooltip-id="search" className='bg-white text-secondary/80 cursor-pointer shadow-md border border-gray-300 h-7 px-1.5 ml-1 flex items-center justify-center rounded-md'>
-          <Search size={20} />
-          <Filter />
-          <ToolTip id="search" title="Buscar y filtar (F)" />
-        </div>
+        <ButtonWithElement
+          className="px-0.5 py-1"
+          style="primary"
+          appendIcon={
+            <div data-tooltip-id="search" className='bg-white text-secondary/80 cursor-pointer px-1.5 flex items-center justify-center rounded-md'>
+              <Search className="size-5" />
+              <Filter />
+              <ToolTip id="search" title="Buscar y filtar (F)" />
+            </div>
+          }
+        />
         <div data-tooltip-id="sort" className='bg-white cursor-pointer shadow-md p-1 border border-gray-300 size-7 text-secondary/80 ml-1 flex items-center justify-center rounded-md'>
           <Sort />
           <ToolTip id="sort" title="Ordenar" />
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 

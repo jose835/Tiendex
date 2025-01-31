@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
+import { ThreeDots } from '../../icons/icons';
+import { ProductProps } from '../../types/types';
 import Button from '../../components/forms/Button';
 import CheckBox from '../../components/forms/CheckBox';
 import StatusTags from '../../components/StatusTags';
-import { ThreeDots } from '../../icons/icons';
 import ToolTip from '../../components/forms/ToolTip';
-import { ProductProps } from '../../types/types';
-import { currencyFormatter } from '../../utils/function';
+import ButtonWithElement from '../../components/forms/ButtonWithElement';
 
 interface ProductsTableProps {
   products: ProductProps[];
@@ -66,38 +66,30 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ products, showOptions, se
             <th scope="col" className="px-2 font-medium" style={{ visibility: showOptions ? 'visible' : 'hidden' }}>
               Inventario
             </th>
-            <th scope="col" className="px-2 font-medium text-right" style={{ visibility: showOptions ? 'visible' : 'hidden' }}>
-              Precio
-            </th>
-            <th scope="col" className="px-2 font-medium text-right" style={{ visibility: showOptions ? 'visible' : 'hidden' }}>
-              Costo
-            </th>
-            <th scope="col" className="px-2 font-medium" style={{ visibility: showOptions ? 'visible' : 'hidden' }}>
-              Subcategoria
-            </th>
-            <th scope="col" className="px-2 font-medium" style={{ visibility: showOptions ? 'visible' : 'hidden' }}>
-              Tipo
-            </th>
             <th scope="col" className="px-2 font-medium">
               {!showOptions ? (
                 <div className='flex items-center justify-end'>
                   <div className='absolute right-2 flex'>
                     <Button name='Editar' className='bg-white shadow-md border border-gray-300' />
                     <Button name='Borrador' className='bg-white shadow-md ml-1 border border-gray-300' />
-                    <div data-tooltip-id="options" className='bg-white border border-gray-300 shadow-md size-8 ml-1 flex items-center justify-center rounded-md'>
-                      <ThreeDots />
-                      <ToolTip id='options' title='Mas opciones' />
-                    </div>
+                    <ButtonWithElement
+                      appendIcon={
+                        <div data-tooltip-id="options" className='bg-white border border-gray-300 shadow-md size-8 ml-1 flex items-center justify-center rounded-md'>
+                          <ThreeDots />
+                          <ToolTip id='options' title='Mas opciones' />
+                        </div>
+                      }
+                    />
                   </div>
                 </div>
               ) : (
-                "Proveedor"
+                "Subcategoria"
               )}
             </th>
           </tr>
         </thead>
         <tbody>
-          {products.map(({ name, productId, state, product_price, subCategoryName, organization_product }) => (
+          {products.map(({ name, productId, state, subCategoryName }) => (
             <tr key={productId} className="bg-white [&>td]:font-semibold [&>td]:text-[13px] [&>td]:text-secondary/90 border-b hover:bg-gray-50">
               <td className="w-4 p-2">
                 <CheckBox
@@ -118,20 +110,8 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ products, showOptions, se
               <td className="px-2 py-2">
                 <span className='text-red-900'>0 en inventario</span>
               </td>
-              <td className="px-2 py-2 text-right">
-                {product_price.price === null || product_price.price === 0 ? currencyFormatter(0) : currencyFormatter(product_price.price)}
-              </td>
-              <td className="px-2 py-2 text-right">
-                {product_price.cost === null || product_price.cost === 0 ? currencyFormatter(0) : currencyFormatter(product_price.cost)}
-              </td>
               <td className="p-2">
                 {subCategoryName}
-              </td>
-              <td className="p-2">
-                {organization_product.productType === null || organization_product.productType === '' ? 'N/A' : organization_product.productType}
-              </td>
-              <td className="p-2">
-                {organization_product.productVendor === null || organization_product.productVendor === '' ? 'N/A' : organization_product.productVendor}
               </td>
             </tr>
           ))}

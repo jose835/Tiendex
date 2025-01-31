@@ -1,6 +1,7 @@
 import React from 'react';
 import RadioButton from './forms/RadioButton';
 import { StepsProps } from '../types/types';
+import Button from './forms/Button';
 
 interface Props extends StepsProps {
   onClick: () => void;
@@ -18,10 +19,12 @@ export default function Steps({ title, description, buttonSecondary = false, act
           className={`ml-10 transition-all duration-300 ${active ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}
         >
           <p className="mr-24 text-secondary font-medium text-xs">{description}</p>
-          <button
-            className="px-5 py-2 mt-5 mb-5 font-semibold inline-block shadow-lg shadow-gray-500/50 bg-black text-white rounded-lg text-xs">
-            {buttonName}
-          </button>
+          <Button 
+            name={buttonName}
+            onClick={onClick}
+            className='mt-5'
+            style='secondary'
+          />
 
           {buttonSecondary &&
             <button
