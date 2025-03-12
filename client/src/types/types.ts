@@ -13,7 +13,7 @@ export interface CategoryOption {
 }
 
 export interface CategoryProps {
-  categoryId: string,
+  category_id: string,
   name: string,
   state: boolean
 }
@@ -141,10 +141,10 @@ interface ProductOptionVariantProps {
 }
 
 export interface AddProductProps {
-  subCategoryId: string,
+  categoryId: string,
   name: string,
   description: string,
-  state: boolean,
+  state: number,
   productCollection: string,
   productOrigin: string,
   productType: string,

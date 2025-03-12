@@ -12,7 +12,7 @@ interface Props {
 
 const PriceProduct = ({ formData, handleInputChange }: Props) => {
   return (
-    <div className="bg-white rounded-lg mt-8 py-5">
+    <div className="bg-white rounded-lg mt-8 py-5 border border-gray-300">
       <div className="mx-4">
         <h2 className={`font-semibold text-[15px] mb-3`}>Precios</h2>
         <div className="mb-8">

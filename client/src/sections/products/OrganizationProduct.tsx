@@ -8,7 +8,7 @@ interface Props {
 
 const OrganizationProduct = ({ formData, handleInputChange }: Props) => {
   return (
-    <div className="bg-white rounded-lg mt-8 w-full px-3 py-5 md:ml-8">
+    <div className="bg-white rounded-lg mt-8 w-full px-3 py-5 border border-gray-300">
       <h2 className={`font-semibold text-[15px] mb-3`}>Organización del producto</h2>
       <FieldInput required={false} value={formData.productType} onChange={(e) => handleInputChange('productType', e.target.value)} name="Tipo de producto" id="typeProduct" />
       <FieldInput required={false} value={formData.productVendor} onChange={(e) => handleInputChange('productVendor', e.target.value)} name="Proveedor" id="vendor" />

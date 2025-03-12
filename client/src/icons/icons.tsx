@@ -279,7 +279,7 @@ export const Filter = () => (
     strokeWidth={1.5} viewBox="0 0 20 20" focusable="false" aria-hidden="true"><path d="M3 6a.75.75 0 0 1 .75-.75h12.5a.75.75 0 0 1 0 1.5h-12.5a.75.75 0 0 1-.75-.75Z"></path><path d="M6.75 14a.75.75 0 0 1 .75-.75h5a.75.75 0 0 1 0 1.5h-5a.75.75 0 0 1-.75-.75Z"></path><path d="M5.5 9.25a.75.75 0 0 0 0 1.5h9a.75.75 0 0 0 0-1.5h-9Z"></path></svg>
 )
 
-export const Plus = ({ className }: { className: string }) => (
+export const Plus = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={`icon ${className} icon-tabler icons-tabler-outline icon-tabler-plus`}>
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
     <path d="M12 5l0 14" />
@@ -294,4 +294,86 @@ export const Import = ({ className }: { className: string }) => (
     <path d="M7 11l5 5l5 -5" />
     <path d="M12 4l0 12" />
   </svg>
+)
+
+export const BoldIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-bold"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M7 5h6a3.5 3.5 0 0 1 0 7h-6z" /><path d="M13 12h1a3.5 3.5 0 0 1 0 7h-7v-7" /></svg>
+)
+
+export const ItalicIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-italic"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M11 5l6 0" /><path d="M7 19l6 0" /><path d="M14 5l-4 14" /></svg>
+)
+
+export const UnderlineIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={24} height={22} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-underline"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M7 5v5a5 5 0 0 0 10 0v-5" /><path d="M5 19h14" /></svg>
+)
+
+export const IAIcon = () => (
+  <svg width="20px" height="20px" viewBox="0 0 24 24" strokeWidth="2" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor"><path d="M8 15C12.8747 15 15 12.949 15 8C15 12.949 17.1104 15 22 15C17.1104 15 15 17.1104 15 22C15 17.1104 12.8747 15 8 15Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"></path><path d="M2 6.5C5.13376 6.5 6.5 5.18153 6.5 2C6.5 5.18153 7.85669 6.5 11 6.5C7.85669 6.5 6.5 7.85669 6.5 11C6.5 7.85669 5.13376 6.5 2 6.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"></path></svg>
+)
+
+export const TextColorIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-text-color"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M9 15v-7a3 3 0 0 1 6 0v7" /><path d="M9 11h6" /><path d="M5 19h14" /></svg>
+)
+
+export const TextAlignIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-align-left"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 6l16 0" /><path d="M4 12l10 0" /><path d="M4 18l14 0" /></svg>
+)
+
+export const LinkIcon = () => (
+  <svg width="17" height="17" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+)
+
+export const PlayCircleIcon = () => (
+  <svg width="22" height="22" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 2a10 10 0 1 0 0 20 10 10 0 1 0 0-20z"></path>
+    <path d="m10 8 6 4-6 4V8z"></path>
+  </svg>
+)
+
+export const CodeHTMLIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-code"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M7 8l-4 4l4 4" /><path d="M17 8l4 4l-4 4" /><path d="M14 4l-4 16" /></svg>
+)
+
+export const VignetteIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-list"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M9 6l11 0" /><path d="M9 12l11 0" /><path d="M9 18l11 0" /><path d="M5 6l0 .01" /><path d="M5 12l0 .01" /><path d="M5 18l0 .01" /></svg>
+)
+
+export const ListNumberIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-list-numbers"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M11 6h9" /><path d="M11 12h9" /><path d="M12 18h8" /><path d="M4 16a2 2 0 1 1 4 0c0 .591 -.5 1 -1 1.5l-3 2.5h4" /><path d="M6 10v-6l-2 2" />
+  </svg>
+)
+
+export const DecreaseBleeding = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="15px"
+    height="15px"
+    viewBox="165 75 270 270"
+    fill="currentColor"
+  >
+    <path d="M167.4 75.9c-.2.2-.4 9.6-.4 20.8V117h264V76l-131.6-.2c-72.4-.2-131.8-.1-132 .1zM268.7 150.7c-.4.3-.7 9.8-.7 21V192h163l-.2-20.8-.3-20.7-80.6-.3c-44.3-.1-80.9.1-81.2.5zM234.4 155.3c-2.8 2.3-15.2 12.3-27.5 22.2-12.3 9.9-22.6 18.2-22.9 18.5-.3.3-3.8 3.1-7.7 6.3-4 3.2-7.3 6-7.3 6.2 0 .4 9.3 8 41.1 33.5 8.5 6.9 18.7 15.1 22.7 18.2 3.9 3.2 7.3 5.8 7.6 5.8.4 0 .6-25.9.6-57.5s-.3-57.5-.7-57.4c-.5 0-3.1 1.9-5.9 4.2zM268.2 245.7l.3 20.8 81.3.3 81.2.2v-42H268l.2 20.7zM167 320.5V341l3.3.1c3.4 0 250.6 0 257-.1h3.7v-41H167v20.5z" />
+  </svg>)
+
+export const AumentBeleeding = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="15px"
+    height="15px"
+    viewBox="75 80 350 340"
+    fill="currentColor"
+  >
+    <path d="M78 103.4V127h344V81H259.2c-89.6 0-167-.3-172-.6l-9.2-.7v23.7zM203 201v23h219v-46H203v23zM78 250c0 39 .3 71 .6 71s6.7-5.7 14.2-12.7c7.6-7 14.2-13.2 14.8-13.8.7-.5 4-3.7 7.5-7 3.5-3.4 13.9-12.9 23.2-21.4 9.2-8.4 16.7-15.6 16.7-16.1 0-.4-10.7-10.6-23.7-22.6-13.1-12.1-24-22.1-24.3-22.4-2.2-2.5-27.9-26-28.4-26-.3 0-.6 31.9-.6 71zM203.2 298.7l.3 22.8 109.3.3 109.2.2v-46H203l.2 22.7zM78 396v23h344v-46H78v23z" />
+  </svg>
+)
+
+export const TableIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-table-dashed"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /><path d="M3 10h18" /><path d="M10 3v18" /></svg>
+)
+
+export const CancelIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-cancel"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M18.364 5.636l-12.728 12.728" /></svg>
 )

@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import Modal from '../../layouts/Modal';
 import { ProductActive, ProductProps } from '../../types/types';
 import { Content, Search } from '../../icons/icons';
-import { getProducts } from '../../api/inventory/product';
 import CheckBox from '../../components/forms/CheckBox';
 import FieldInputWithElement from '../../components/forms/FieldInputWithElement';
 
@@ -20,9 +19,9 @@ export default function ProductModal({ text, onClose, productsActive, setProduct
 
   useEffect(() => {
     async function loadProducts() {
-      const { data } = await getProducts();
-      setProducts(data);
-      productsRef.current = data;
+      // const { data } = await getProducts();
+      // setProducts(data);
+      // productsRef.current = data;
       setTextSearch(text)
     }
 

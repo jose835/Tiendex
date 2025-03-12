@@ -3,7 +3,11 @@ import MenuItem from "../components/MenuItem";
 import SalesChannel from "../components/SalesChannels";
 import { Content, Customers, Discount, Home, Marketing, Orders, Products, Sales, Settings, Store } from "../icons/icons";
 
-function Aside() {
+interface Props {
+  isSidebarOpen: boolean;
+}
+
+function Aside({ isSidebarOpen }: Props) {
   const [activeItem, setActiveItem] = useState<number>(1);
 
   const menuItems = [
@@ -22,7 +26,7 @@ function Aside() {
   ];
 
   return (
-    <aside className='[grid-area:aside] flex-col flex overflow-hidden p-6 bg-whiting2'>
+    <aside className={`fixed rounded-tl-lg flex flex-col justify-between bottom-0 z-50 left-0 w-64 bg-whiting2 p-6 overflow-y-auto transition-transform transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:relative lg:w-[300px] lg:z-auto`}>
       {menuItems.map(({ id, text, Icon: icon }) => (
         <button key={id} onClick={() => setActiveItem(id)} className="w-full">
           <MenuItem Icon={icon} text={text} className={id === activeItem ? 'bg-white py-1' : ''} />

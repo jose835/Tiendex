@@ -3,8 +3,9 @@ import TextArea from '../../components/forms/TextArea';
 import DragDropFile from '../../components/forms/DragDropFile';
 import Select from '../../components/forms/Select';
 import { useEffect, useState } from 'react';
-import { AddProductProps, CategoryOption, SubCategoryProps } from '../../types/types';
-import { getSubCategories } from '../../api/inventory/product';
+import { AddProductProps, CategoryOption } from '../../types/types';
+import { getCategories } from '../../api/inventory/product/product';
+import { FieldMarkDown } from '../../components/forms/FieldMarkDown';
 
 interface Props {
   formData: AddProductProps;
@@ -16,10 +17,11 @@ export default function GeneralInformation({ formData, handleInputChange }: Prop
 
   useEffect(() => {
     async function loadCategories() {
-      const { data }: { data: SubCategoryProps[] } = await getSubCategories();
+      const data = await getCategories();
+
       const formatData = data.map((item) => ({
         label: item.name,
-        value: item.subCategoryId,
+        value: item.category_id,
       }));
 
       setCategories(formatData);
@@ -29,7 +31,7 @@ export default function GeneralInformation({ formData, handleInputChange }: Prop
   }, []);
 
   return (
-    <div className="bg-white rounded-lg mt-8 px-4 py-5">
+    <div className="bg-white border border-gray-300 rounded-lg mt-8 px-4 py-5">
       <FieldInput
         onChange={(e) => handleInputChange('name', e.target.value)}
         name="Titulo"
@@ -46,12 +48,14 @@ export default function GeneralInformation({ formData, handleInputChange }: Prop
         rows={8}
         value={formData.description}
       />
+
+      <FieldMarkDown id='description' name='Descripción' rows={10} onChange={(e) => handleInputChange('description', e.target.value || '')} />
       <DragDropFile />
       <Select
         name="Categoría"
         value={categories}
         placeholder="Electrónica, Ropa, Hogar y más..."
-        onChange={(value) => handleInputChange('subCategoryId', value)}
+        onChange={(value) => handleInputChange('categoryId', value)}
       />
     </div>
   );

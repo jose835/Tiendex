@@ -18,7 +18,7 @@ interface Props {
 const InventoryProduct: React.FC<Props> = ({ showInputs, handleCheckboxChange, formData, handleInputChange }) => {
   
   return (
-    <div className="bg-white rounded-lg mt-8 py-5">
+    <div className="bg-white rounded-lg mt-8 py-5 border border-gray-300">
       <div className='mx-4'>
         <h2 className={`font-semibold text-[15px] mb-3`}>Inventario</h2>
         <CheckBox className='mb-5' name="Cantidad de seguimiento" onChange={(value) => handleCheckboxChange('minStock', value)} initialValue={false} />

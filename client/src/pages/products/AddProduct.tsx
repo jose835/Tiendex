@@ -10,16 +10,15 @@ import { Back } from '../../icons/icons';
 import { useRef, useState } from 'react';
 import VariantProduct from '../../sections/products/variants/VariantProduct';
 import { AddProductProps, CombinationProps, Variant } from '../../types/types';
-import { createCombination, createProduct, createProductPrice, createVariant } from '../../api/inventory/product';
+import { supabase } from '../../api/supabase-client';
 import { showToast } from '../../components/Toast';
-import { v4 as uuid } from 'uuid'
 
 export default function AddProduct() {
   const INITIAL_FORM_DATA = {
-    subCategoryId: '',
+    categoryId: '',
     name: '',
     description: '',
-    state: true,
+    state: 0,
     productCollection: '',
     productOrigin: '',
     productType: '',
@@ -62,71 +61,75 @@ export default function AddProduct() {
     e.preventDefault();
     e.stopPropagation();
 
-    const productId = uuid();
-
     const newProduct = {
-      productId: productId,
       name: formData.name,
       description: formData.description,
-      subCategoryId: formData.subCategoryId,
+      category_id: formData.categoryId,
       state: formData.state,
     }
+    console.log(newProduct)
 
-    const productPrice = {
-      "product": productId,
-      "price": formData.price,
-      "comparePrice": formData.comparePrice,
-      "cost": formData.cost,
-      "isTax": formData.isTax
+    const { error } = await supabase.from('product').insert(newProduct);
+
+    if (error) {
+      showToast(error.message, false);
+    } else {
+      showToast('Producto creado exitosamente', true);
     }
 
-    const { success, error } = await createProduct(newProduct);
+    // const productPrice = {
+    //   "product": productId,
+    //   "price": formData.price,
+    //   "comparePrice": formData.comparePrice,
+    //   "cost": formData.cost,
+    //   "isTax": formData.isTax
+    // }
 
     if (variants.length === 0) {
-      await createProductPrice(productPrice);
+      // await createProductPrice(productPrice);
     } else {
-      saveVariants(productId)
+      // saveVariants(productId)
     }
 
-    if (success) {
-      showToast('Producto agregado exitosamente', true);
-      clearForm();
-    } else {
-      showToast(error.message, false);
-    }
+    // if (success) {
+    //   showToast('Producto agregado exitosamente', true);
+    //   clearForm();
+    // } else {
+    //   showToast(error.message, false);
+    // }
   }
 
-  function saveVariants(productId: string) {
-    variants.forEach(async (variant) => {
-      const newVariant = {
-        productId: productId,
-        name: variant.name,
-        options: variant.options.filter(option => option.name.trim() !== '').map(option => option.name)
-      }
+  // function saveVariants(productId: string) {
+  //   // variants.forEach(async (variant) => {
+  //   //   // const newVariant = {
+  //   //   //   productId: productId,
+  //   //   //   name: variant.name,
+  //   //   //   options: variant.options.filter(option => option.name.trim() !== '').map(option => option.name)
+  //   //   // }
 
-      await createVariant(newVariant);
-    })
+  //   //   // await createVariant(newVariant);
+  //   // })
 
-    saveCombinations(productId);
-  }
+  //   saveCombinations(productId);
+  // }
 
-  function saveCombinations(productId: string) {
-    combinations.forEach(async (combination) => {
-      const newCombination = {
-        productId: productId,
-        name: combination.optionName,
-        options: combination.options.map(option => {
-          return {
-            name: option.name,
-            price: option.price
-          }
-        }),
-        price: combination.variantPrice
-      }
+  // function saveCombinations(productId: string) {
+  //   combinations.forEach(async (combination) => {
+  //     const newCombination = {
+  //       productId: productId,
+  //       name: combination.optionName,
+  //       options: combination.options.map(option => {
+  //         return {
+  //           name: option.name,
+  //           price: option.price
+  //         }
+  //       }),
+  //       price: combination.variantPrice
+  //     }
 
-      await createCombination(newCombination);
-    })
-  }
+  //     await createCombination(newCombination);
+  //   })
+  // }
 
   function handleClickSubmit() {
     if (formRef.current) {
@@ -134,31 +137,31 @@ export default function AddProduct() {
     }
   }
 
-  function clearForm() {
-    setFormData(INITIAL_FORM_DATA)
-    setVariants([])
-    setCombinations([])
-  }
+  // function clearForm() {
+  //   setFormData(INITIAL_FORM_DATA)
+  //   setVariants([])
+  //   setCombinations([])
+  // }
 
   return (
     <Container text='Producto sin guardar' save onSaveClick={handleClickSubmit}>
       <section className="flex flex-col items-center h-full">
         <div className="max-w-screen-lg mt-5 w-full mx-auto">
-          <header className="flex items-center">
+          <header className="flex items-center ">
             <Back />
-            <h2 onClick={() => saveVariants(uuid())} className="ml-4 text-lg font-semibold text-secondary">Agregar producto</h2>
+            <h2 className="ml-4 text-lg font-semibold text-secondary">Agregar Producto</h2>
           </header>
 
-          <main className="flex flex-col md:flex-row items-start">
-            <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col md:flex-row items-start">
-              <div className="flex-1 md:w-auto w-full">
+          <main className="flex flex-col xl:flex-row items-start">
+            <form ref={formRef} onSubmit={handleSubmit} className="flex space-x-6 flex-col xl:flex-row items-start">
+              <div className="flex-1 xl:w-auto w-full">
                 <GeneralInformation formData={formData} handleInputChange={handleInputChange} />
                 <InventoryProduct formData={formData} handleInputChange={handleInputChange} showInputs={showInputs} handleCheckboxChange={handleCheckboxChange} />
                 <PriceProduct handleInputChange={handleInputChange} formData={formData} />
                 <ShippingProduct handleInputChange={handleInputChange} formData={formData} showInputs={showInputs} handleCheckboxChange={handleCheckboxChange} />
                 <VariantProduct combinations={combinations} setCombinations={setCombinations} setVariants={setVariants} variants={variants} showInputs={showInputs} handleCheckboxChange={handleCheckboxChange} />
 
-                <div className="bg-white rounded-lg mt-8 px-4 py-5">
+                <div className="bg-white rounded-lg mt-8 px-4 py-5 border border-gray-300">
                   <div className='flex items-center justify-between'>
                     <h2 className={`font-semibold text-[15px] mb-2`}>Listado de motores de búsqueda</h2>
                     <button className='text-[#4781d0] text-sm font-semibold hover:underline'>Editar</button>
@@ -167,7 +170,7 @@ export default function AddProduct() {
                 </div>
               </div>
 
-              <div className="w-full md:w-1/3">
+              <div className="w-full xl:w-1/3">
                 <StatusProduct />
                 <PublicationProduct />
                 <OrganizationProduct formData={formData} handleInputChange={handleInputChange} />

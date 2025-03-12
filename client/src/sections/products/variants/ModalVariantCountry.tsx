@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import Modal from '../../../layouts/Modal'
 import { CategoryOption, CountryProps } from '../../../types/types';
-import { getCountries } from '../../../api/general/general';
 import Select from '../../../components/forms/Select';
 import { Help } from '../../../icons/icons';
 import ToolTip from '../../../components/forms/ToolTip';
@@ -16,13 +15,13 @@ export default function ModalVariantCountry({ onClose, onClickSave }: Props) {
   const [value, setValue] = useState<string>('');
 
   useEffect(() => {
-    async function loadCountries() {
-      const { data }: { data: CountryProps[] } = await getCountries();
-      const formatData = data.map((item) => ({ label: item.name, value: item.countryId }));
-      setCountries(formatData);
-    }
+    // async function loadCountries() {
+    //   // const { data }: { data: CountryProps[] } = await getCountries();
+    //   const formatData = data.map((item) => ({ label: item.name, value: item.countryId }));
+    //   setCountries(formatData);
+    // }
 
-    loadCountries();
+    // loadCountries();
   }, [])
 
   return (

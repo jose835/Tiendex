@@ -4,7 +4,6 @@ import ProductsHeader from '../../sections/productList/ProductHeader';
 import ProductsFilters from '../../sections/productList/ProductFilter';
 import ProductTable from '../../sections/productList/ProductTable';
 import Welcome from './Welcome';
-import { getProducts } from '../../api/inventory/product';
 import { ProductProps } from '../../types/types';
 
 export default function Products() {
@@ -17,8 +16,8 @@ export default function Products() {
   useEffect(() => {
     async function loadProducts() {
       setIsLoading(true);
-      const { data } = await getProducts();
-      setProducts(data);
+      // const { data } = await getProducts();
+      // setProducts(data);
       setIsLoading(false);
     }
 

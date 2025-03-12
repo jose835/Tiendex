@@ -1,6 +1,7 @@
 import { Toaster } from 'react-hot-toast';
 import Aside from '../sections/Aside'
 import Header from '../sections/Header'
+import { useState } from 'react';
 
 export default function Container({
   text,
@@ -15,13 +16,15 @@ export default function Container({
   onSaveClick?: () => void;
   onClickSecondary?: () => void;
 }) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+
   return (
     <div id='app' className='flex flex-col h-screen overflow-hidden'>
       <Toaster />
       <Header text={text} save={save} onClickSecondary={onClickSecondary} onClick={onSaveClick} />
-      <Aside />
-      <main className='bg-[#f1f1f1] overflow-auto'>
-        <div className='pb-10 px-5 pt-5'>
+      <Aside isSidebarOpen={isSidebarOpen} />
+      <main className='bg-[#f1f1f1] md:px-5 overflow-auto' style={{ scrollbarWidth: 'thin' }}>
+        <div className='pb-10 pt-5'>
           {children}
         </div>
       </main>

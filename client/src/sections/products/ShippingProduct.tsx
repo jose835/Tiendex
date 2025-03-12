@@ -6,7 +6,6 @@ import Line from '../../components/Line';
 import PrependChildInput from '../../components/PrependChildInput';
 import { PlusCirle } from '../../icons/icons';
 import { AddProductProps, CategoryOption, CountryProps } from '../../types/types';
-import { getCountries } from '../../api/general/general';
 import Select from '../../components/forms/Select';
 
 interface Props {
@@ -24,16 +23,16 @@ const ShippingProduct: React.FC<Props> = ({ formData, handleInputChange, showInp
 
   useEffect(() => {
     async function loadCountries() {
-      const { data }: { data: CountryProps[] } = await getCountries();
-      const formatData = data.map((item) => ({ label: item.name, value: item.countryId }));
-      setCountries(formatData);
+      // const { data }: { data: CountryProps[] } = await getCountries();
+      // const formatData = data.map((item) => ({ label: item.name, value: item.countryId }));
+      // setCountries(formatData);
     }
 
     loadCountries();
   }, [])
 
   return (
-    <div className="bg-white rounded-lg mt-8 py-5">
+    <div className="bg-white rounded-lg mt-8 py-5 border border-gray-300">
       <div className='mx-4 mb-5'>
         <h2 className={`font-semibold text-[15px] mb-3`}>Envío</h2>
         <CheckBox

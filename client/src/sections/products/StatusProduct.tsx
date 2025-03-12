@@ -1,7 +1,7 @@
 import FieldSelect from '../../components/forms/FieldSelect';
 
 const StatusProduct = () => (
-  <div className="bg-white rounded-lg mt-8 w-full px-3 py-5 md:ml-8">
+  <div className="bg-white rounded-lg mt-8 w-full px-3 py-5 border border-gray-300">
     <h2 className={`font-semibold text-[15px] mb-3`}>Estado</h2>
     <FieldSelect name="" id="status" options={[
       { name: 'Activo', value: 1 },
